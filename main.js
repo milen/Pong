@@ -85,19 +85,26 @@ function moveAll() {
     ballX += ballSpeedX;
     ballY += ballSpeedY;
 
-    if (ballX > canvas.width) {
-        if (ballY > playerTwoY && ballY < playerTwoY + padSize) {
-            ballSpeedX = -ballSpeedX;
-        } else {
-            scoreP1 += 1;
-            ballReset();
-        }
-    }
     if (ballX < 0) {
         if (ballY > playerOneY && ballY < playerOneY + padSize) {
             ballSpeedX = -ballSpeedX;
+            // change reflect angle depending on how far from the center of the paddle the ball hits
+            let angle = ballY - (playerOneY + (padSize / 2));
+            ballSpeedY = angle * 0.35;
         } else {
             scoreP2 += 1;
+            ballReset();
+        }
+    }
+
+    if (ballX > canvas.width) {
+        if (ballY > playerTwoY && ballY < playerTwoY + padSize) {
+            ballSpeedX = -ballSpeedX;
+            // change reflect angle depending on how far from the center of the paddle the ball hits
+            let angle = ballY - (playerTwoY + (padSize / 2));
+            ballSpeedY = angle * 0.35;
+        } else {
+            scoreP1 += 1;
             ballReset();
         }
     }
@@ -125,8 +132,10 @@ function drawAll() {
     // draw pad P2
     solidRect(canvas.width - padWeight, playerTwoY, padWeight, padSize, "gray");
 
-    canvasContext.font = "normal 36px Verdana";
+    canvasContext.font = "normal 36px Arial";
+    canvasContext.fillStyle = "white";
     canvasContext.fillText(scoreP1, 100, 100);
+    canvasContext.fillStyle = "gray";
     canvasContext.fillText(scoreP2, canvas.width - 100, 100);
 }
 
