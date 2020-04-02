@@ -1,4 +1,4 @@
-var canvas,
+let canvas,
     canvasContext,
     ballSize,
     ballX,
@@ -9,6 +9,8 @@ var canvas,
     playerTwoY,
     padSize;
 
+let scoreP1 = 0,
+    scoreP2 = 0;
 
 
 const padWeight = 10;
@@ -36,21 +38,21 @@ window.onload = function () {
         moveAll();
     }, 1000 / fps);
 
-    this.canvas.addEventListener("mousemove",
+    canvas.addEventListener("mousemove",
         function (e) {
-            var mousePosition = calcMouse(e);
+            let mousePosition = calcMouse(e);
             playerOneY = mousePosition.y - (padSize / 2);
         }
     )
 }
 
 function calcMouse(e) {
-    var base = canvas.getBoundingClientRect();
-    var dom = document.documentElement;
+    let base = canvas.getBoundingClientRect();
+    let dom = document.documentElement;
 
     // get mouse position on the canvas not the browser
-    var mX = e.clientX - base.left - dom.scrollLeft;
-    var mY = e.clientY - base.top - dom.scrollTop;
+    let mX = e.clientX - base.left - dom.scrollLeft;
+    let mY = e.clientY - base.top - dom.scrollTop;
 
     return {
         x: mX,
@@ -63,6 +65,7 @@ function ballReset() {
     // TODO - start at paddle and do different types of serve for speed
     ballX = (canvas.width / 2) - (ballSize / 2);
     ballY = (canvas.height / 2) - (ballSize / 2);
+    ballSpeedX = -ballSpeedX;
 }
 
 function botPlay() {
@@ -70,10 +73,10 @@ function botPlay() {
 
     // padSize devided by some number to an area more usefull than 1 pixel to avoid glitchy movement
     if (padCenter < ballY - padSize / 4) {
-        playerTwoY += 8;
+        playerTwoY += 4;
 
     } else if (padCenter > ballY + padSize / 4) {
-        playerTwoY -= 8;
+        playerTwoY -= 4;
     }
 }
 
@@ -86,6 +89,7 @@ function moveAll() {
         if (ballY > playerTwoY && ballY < playerTwoY + padSize) {
             ballSpeedX = -ballSpeedX;
         } else {
+            scoreP1 += 1;
             ballReset();
         }
     }
@@ -93,6 +97,7 @@ function moveAll() {
         if (ballY > playerOneY && ballY < playerOneY + padSize) {
             ballSpeedX = -ballSpeedX;
         } else {
+            scoreP2 += 1;
             ballReset();
         }
     }
@@ -108,7 +113,6 @@ function moveAll() {
 }
 
 function drawAll() {
-
     // draw background
     solidRect(0, 0, canvas.width, canvas.height, "black");
 
@@ -120,6 +124,10 @@ function drawAll() {
 
     // draw pad P2
     solidRect(canvas.width - padWeight, playerTwoY, padWeight, padSize, "gray");
+
+    canvasContext.font = "normal 36px Verdana";
+    canvasContext.fillText(scoreP1, 100, 100);
+    canvasContext.fillText(scoreP2, canvas.width - 100, 100);
 }
 
 function solidRect(startX, startY, width, height, colour) {
